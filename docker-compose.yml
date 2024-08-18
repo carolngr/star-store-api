@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: star-store-pg
+    environment:
+      POSTGRES_DB: star-store
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - ./schemas:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+# docker exec -it star-store-pg psql -U root -d star-store
