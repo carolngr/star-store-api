@@ -23,7 +23,10 @@ class OrdersController {
             shipping_value: Number(order.shipping_value),
             sub_total_value: Number(order.sub_total_value),
             total_value: Number(order.total_value),
-            items,
+            items: items.map((item) => ({
+              ...item,
+              amount: item.quantity,
+            })),
           };
         })
       );
@@ -37,19 +40,12 @@ class OrdersController {
   async store(request: AuthRequest, response: Response): Promise<Response> {
     const body = request.body as ICreateDTO;
     const user_id = request.userId ?? "";
-    if (!body.address_id || !body.card_id) {
+    if (!body.address || !body.card) {
       return response
         .status(400)
         .json({ error: "address_id and card_id are required!" });
     }
-    const address = await AddressRepository.findById(body.address_id);
-    const card = await CardRepository.findById(body.card_id);
-    if (!address) {
-      return response.status(404).json({ error: "Address not found!" });
-    }
-    if (!card) {
-      return response.status(404).json({ error: "Address not found!" });
-    }
+    const { address, card } = body;
     const sub_total_value = body.items.reduce((preview, current) => {
       return Math.min(current.price * current.quantity) + preview;
     }, 0);
@@ -78,4 +74,3 @@ class OrdersController {
   }
 }
 export default new OrdersController();
-

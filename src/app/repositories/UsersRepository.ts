@@ -50,7 +50,22 @@ class UsersRepository {
     );
     return rows[0] || null;
   }
+
+  async updateRegister(
+    id: string,
+    userUpdate: UserUpdate
+  ): Promise<User | null> {
+    if (!isValidUUID(id)) return null;
+    const { name, email, password } = userUpdate;
+    const rows = await db.query<User>(
+      `UPDATE users
+      SET name = $1, email = $2, updated_at = NOW()
+      WHERE id = $3
+      RETURNING *`,
+      [name, email, id]
+    );
+    return rows[0] || null;
+  }
 }
 
 export default new UsersRepository();
-

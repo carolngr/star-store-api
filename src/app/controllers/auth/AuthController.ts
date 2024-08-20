@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import UsersRepository from "../../repositories/UsersRepository";
 import { AuthRequest } from "../../types/AuthRequest";
 import { CreateUserDTO } from "./dtos/registerDTO";
+import isValidUUID from "../../utils/isValidUUID";
 
 class AuthController {
   async login(request: Request, response: Response): Promise<Response> {
@@ -64,6 +65,29 @@ class AuthController {
     return response.status(201).json({ token });
   }
 
+  async updateRegister(
+    request: AuthRequest,
+    response: Response
+  ): Promise<Response> {
+    const { name, email } = request.body;
+    const id = String(request.userId);
+    if (!isValidUUID(String(id ?? ""))) {
+      return response.status(400).json({ error: "Invalid user id" });
+    }
+
+    if (!name) {
+      return response.status(400).json({ error: "Name is required" });
+    }
+
+    const userExist = await UsersRepository.findById(id);
+    if (!userExist) {
+      return response.status(404).json({ error: "User not found" });
+    }
+
+    const user = await UsersRepository.updateRegister(id, { name, email });
+    return response.status(201).json(user);
+  }
+
   async me(request: AuthRequest, response: Response): Promise<Response> {
     const { userId } = request;
 
@@ -82,4 +106,3 @@ class AuthController {
 }
 
 export default new AuthController();
-

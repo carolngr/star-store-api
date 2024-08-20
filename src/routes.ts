@@ -14,6 +14,11 @@ const router = Router();
 // Auth
 router.post("/auth/login", AuthController.login);
 router.post("/auth/register", AuthController.register);
+router.put(
+  "/auth/update-register",
+  authMiddleware,
+  AuthController.updateRegister
+);
 router.get("/auth/me", authMiddleware, AuthController.me);
 
 // Users
@@ -49,4 +54,3 @@ router.get("/orders", authMiddleware, OrdersController.index);
 router.post("/orders", authMiddleware, OrdersController.store);
 
 export default router;
-

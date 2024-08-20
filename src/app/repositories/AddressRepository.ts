@@ -1,6 +1,5 @@
 import db from "../../database";
 import { Address } from "../entities/Address";
-import isValidUUID from "../utils/isValidUUID";
 import { AddressRepositoryContract } from "./contracts/AddressRepositoryContract";
 
 class AddressRepository implements AddressRepositoryContract {
@@ -14,12 +13,11 @@ class AddressRepository implements AddressRepositoryContract {
   }
 
   async findById(id: string): Promise<Address | null> {
-    if (!isValidUUID(id)) return null;
     const rows = await db.query<Address>(
       "SELECT * FROM addresses WHERE id = $1",
       [id]
     );
-    return rows[0] || null;
+    return rows[0];
   }
 
   async create(
@@ -63,4 +61,3 @@ class AddressRepository implements AddressRepositoryContract {
 }
 
 export default new AddressRepository();
-
