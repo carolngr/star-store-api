@@ -1,4 +1,4 @@
-# Star Sotre
+# Star Store
 
 ## Descrição
 
